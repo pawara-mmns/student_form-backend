@@ -5,6 +5,9 @@ import edu.icet.form.model.enitity.Student;
 import edu.icet.form.repository.StudentRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class StudentService {
 
@@ -46,6 +49,15 @@ public class StudentService {
                 dto.getStatus(),
                 dto.getNotes()
         );
+    }
+    public StudentDTO saveStudent(StudentDTO dto){
+        Student student = repository.save(mapToEntity(dto));
+        return mapToDTO(student);
+    }
+    public List<StudentDTO>getAllStudents(){
+        return repository.findAll().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 }
 
