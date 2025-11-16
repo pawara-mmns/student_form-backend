@@ -18,7 +18,7 @@ public class StudentService {
     }
     //Convert DTO to Entity and vice versa methods can be added here
 
-        private StudentDTO mapToDTO(Student student) {
+    private StudentDTO mapToDTO(Student student) {
         return new StudentDTO(
                 student.getStudentId(),
                 student.getFirstName(),
@@ -34,7 +34,8 @@ public class StudentService {
                 student.getNotes()
         );
     }
-    private Student mapToEntity(StudentDTO dto){
+
+    private Student mapToEntity(StudentDTO dto) {
         return new Student(
                 dto.getStudentId(),
                 dto.getFirstName(),
@@ -50,14 +51,38 @@ public class StudentService {
                 dto.getNotes()
         );
     }
-    public StudentDTO saveStudent(StudentDTO dto){
+    // save student
+    public StudentDTO saveStudent(StudentDTO dto) {
         Student student = repository.save(mapToEntity(dto));
         return mapToDTO(student);
     }
-    public List<StudentDTO>getAllStudents(){
+    // get all students
+    public List<StudentDTO> getAllStudents() {
         return repository.findAll().stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
+    }
+    // get student by id
+    public StudentDTO getStudentById(String id) {
+        return repository.findById(id)
+                .map(this::mapToDTO)
+                .orElse(null);
+    }
+    // update student
+    public StudentDTO updateStudent(String id, StudentDTO dto) {
+        return repository.findById(id).map(existing -> {
+            dto.setStudentId(id);
+            Student updated = repository.save(mapToEntity(dto));
+            return mapToDTO(updated);
+        }).orElse(null);
+    }
+    // delete student
+    public boolean deleteStudent(String id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }
 
